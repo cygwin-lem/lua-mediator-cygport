@@ -1,0 +1,89 @@
+NAME="lua-mediator"
+VERSION=1.1.2p5
+RELEASE=1
+CATEGORY="Lua"
+SUMMARY="Mediator lua: Event Management for Clean & Decoupled Code"
+DESCRIPTION="\
+mediator_lua allows you to subscribe and publish to a central object so
+you can decouple function calls in your application. It's as simple as
+mediator:subscribe("channel", function). Supports namespacing,
+predicates, and more.
+"
+HOMEPAGE="https://github.com/Olivine-Labs/mediator_lua/"
+
+GIT_REPO="https://github.com/Olivine-Labs/mediator_lua"
+declare -A GIT_DATEHASH_BY_NAME=(
+  # git log --date=iso-strict --format='%cd/%H' -1
+  [1.1.2p5]=2020-02-23T22:23:53-05:00/ae97959308b462d84d0255f511c8e14cdf06667f
+  [1.1.2]=2015-05-30T19:34:58-07:00/v1.1.2-0
+)
+REV_HASH="${GIT_DATEHASH_BY_NAME[${VERSION}]#*/}"
+REV_DATE="${GIT_DATEHASH_BY_NAME[${VERSION}]%/*}"
+REV_DATE_SHORT="${REV_DATE%%T*}"
+GIT_BASENAME="${GIT_REPO##*/}"
+SRC_URI="${GIT_REPO}/archive/${REV_HASH}/${GIT_BASENAME}-${VERSION}.tar.gz"
+SRC_DIR="${GIT_BASENAME}-${REV_HASH#v}"
+
+ARCH="noarch"
+
+################################
+LUA_VERSIONS="5.3:5.4"
+LUA_PKG_NAME="mediator"
+source lua.experiment
+
+################################
+## Patch files
+################################
+# Patch filenames are in a default style of 'git format-patch'
+PATCH_URI=$(\
+  find -maxdepth 1 -type f -name '[0-9][0-9][0-9][0-9]-*.patch' \
+  | sort \
+)
+# Additional patches, if any
+PATCH_URI+="
+"
+
+################################
+## Requirements for building
+################################
+BUILD_REQUIRES="\
+  lua53-devel\
+  lua54-devel\
+"
+# TEST_REQUIRES="\
+# "
+
+################################
+ABI=0
+
+
+################################
+_CYGPORT_RESTRICT_postinst_doc_=1
+
+set_packages_lua_versions ${LUA_VERSIONS} ${LUA_PKG_NAME}
+
+################################
+src_compile_lua() {
+  mkdir -p ${B}/${LUA_VERSION}
+  cd  ${B}/${LUA_VERSION}
+
+  lndirs ${S} .
+}
+
+################################
+src_install_lua() {
+  cd ${B}/${LUA_VERSION}
+
+  __doinsdir src ${LUA_SCRIPTDIR}
+
+  dodoc LICENSE *.md *.rockspec
+}
+
+################################
+src_test_lua() {
+  cd ${B}/${LUA_VERSION}
+
+  echo "No test suite."
+}
+
+################################
