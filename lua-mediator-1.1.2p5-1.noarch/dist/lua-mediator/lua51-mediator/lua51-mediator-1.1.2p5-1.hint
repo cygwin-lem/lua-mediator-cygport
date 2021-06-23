@@ -1,5 +1,5 @@
 category: Lua
-requires:  lua51
+requires: lua51
 sdesc: "Mediator lua: Event Management for Clean & Decoupled Code"
 ldesc: "mediator_lua allows you to subscribe and publish to a central object so
 you can decouple function calls in your application. It's as simple as
